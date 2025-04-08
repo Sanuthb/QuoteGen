@@ -13,6 +13,8 @@ const styles = StyleSheet.create({
   page: {
     padding: 30,
     fontFamily: "Helvetica",
+    // marginLeft: 20,
+    marginRight: 20,
   },
   header: {
     textAlign: "center",
@@ -294,13 +296,13 @@ const QuotePDF = ({ data }) => (
           <Text style={[styles.tableHeaderCell, { width: "15%" }]}>
             Visual Image
           </Text>
-          <Text style={[styles.tableHeaderCell, { width: "40%" }]}>
+          <Text style={[styles.tableHeaderCell, { width: "30%" }]}>
             Equipment Specification Description
           </Text>
-          <Text style={[styles.tableHeaderCell, { width: "8%" }]}>
+          <Text style={[styles.tableHeaderCell, { width: "13%" }]}>
             MRP Per Unit
           </Text>
-          <Text style={[styles.tableHeaderCell, { width: "8%" }]}>
+          <Text style={[styles.tableHeaderCell, { width: "13%" }]}>
             Spl Price Per Unit
           </Text>
           <Text style={[styles.tableHeaderCell, { width: "5%" }]}>Qty No</Text>
@@ -334,22 +336,38 @@ const QuotePDF = ({ data }) => (
                   <Text>No Image</Text>
                 )}
               </View>
-              <View style={[styles.tableCell, { width: "40%" }]}>
+              <View style={[styles.tableCell, { width: "30%" }]}>
                 <Text style={styles.productName}>{p.name}</Text>
                 <View style={{ marginTop: 5 }}>
                   {p.feature?.map((f, i) => (
-                    <View key={i} style={styles.featureItem}>
-                      <Text style={styles.featureIcon}>{CHECKMARK}</Text>
-                      <Text style={styles.productFeature}>{f}</Text>
-                    </View>
+                    // <View key={i} style={styles.featureItem}>
+                    //   <Text style={styles.featureIcon}>{CHECKMARK}</Text>
+                    //   <Text style={styles.productFeature}>{f}</Text>
+                    // </View>
+                    <Text key={i} style={styles.productFeature}>
+                      • {f}
+                    </Text>
                   ))}
                 </View>
               </View>
-              <View style={[styles.tableCell, { width: "8%" }]}>
-                <Text>₹{p.price}</Text>
+              <View style={[styles.tableCell, { width: "13%" }]}>
+                <Text>
+                  <Image
+                    src="/rupee.png"
+                    style={{ width: 6, height: 6, marginRight: 1 }}
+                  />
+                  {p.price}
+                </Text>
               </View>
-              <View style={[styles.tableCell, { width: "8%" }]}>
-                <Text>₹{p.price * 0.9}</Text>
+              <View style={[styles.tableCell, { width: "13%" }]}>
+                <Text>
+                  {" "}
+                  <Image
+                    src="/rupee.png"
+                    style={{ width: 6, height: 6, marginRight: 1 }}
+                  />
+                  {p.price * 0.9}
+                </Text>
               </View>
               <View style={[styles.tableCell, { width: "5%" }]}>
                 <Text>{p.qty}</Text>
@@ -357,7 +375,13 @@ const QuotePDF = ({ data }) => (
               <View
                 style={[styles.tableCell, { width: "9%", borderRightWidth: 0 }]}
               >
-                <Text>₹{p.price * p.qty}</Text>
+                <Text>
+                  <Image
+                    src="/rupee.png"
+                    style={{ width: 6, height: 6, marginRight: 1 }}
+                  />
+                  {p.price * p.qty}
+                </Text>
               </View>
             </View>
           ))
@@ -377,13 +401,20 @@ const QuotePDF = ({ data }) => (
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total:</Text>
           <Text style={styles.totalValue}>
-            ₹{data.products.reduce((sum, p) => sum + p.price * p.qty, 0)}
+            <Image
+              src="/rupee.png"
+              style={{ width: 6, height: 6, marginRight: 1 }}
+            />{" "}
+            {data.products.reduce((sum, p) => sum + p.price * p.qty, 0)}
           </Text>
         </View>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>GST ({data.gst}%):</Text>
           <Text style={styles.totalValue}>
-            ₹
+            <Image
+              src="/rupee.png"
+              style={{ width: 6, height: 6, marginRight: 1 }}
+            />
             {(data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
               data.gst) /
               100}
@@ -391,12 +422,21 @@ const QuotePDF = ({ data }) => (
         </View>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Shipping:</Text>
-          <Text style={styles.totalValue}>₹{data.shipping}</Text>
+          <Text style={styles.totalValue}>
+            <Image
+              src="/rupee.png"
+              style={{ width: 6, height: 6, marginRight: 1 }}
+            />
+            {data.shipping}
+          </Text>
         </View>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Grand Total:</Text>
           <Text style={styles.grandTotal}>
-            ₹
+            <Image
+              src="/rupee.png"
+              style={{ width: 8, height: 8, marginRight: 1 }}
+            />
             {data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
               (1 + data.gst / 100) +
               Number(data.shipping)}
@@ -482,7 +522,7 @@ const QuotePDF = ({ data }) => (
           <Text style={styles.footerHeading}>For ELGIS FITNESS</Text>
           <Text>Nagaraj A</Text>
           <Text>Regional Sales Manager</Text>
-          <Text>📞 89700 70089 / 95907 89333</Text>
+          <Text> 89700 70089 / 95907 89333</Text>
         </View>
       </View>
     </Page>
