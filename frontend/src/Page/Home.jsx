@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Tabs, Form, Input, InputNumber, Button, Select, DatePicker } from "antd";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import {
+  Tabs,
+  Form,
+  Input,
+  InputNumber,
+  Button,
+  Select,
+  DatePicker,
+} from "antd";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import QuotePDF from "../QuotePDF";
 import Livepreview from "../Components/Livepreview";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { productList } from "../data";
+import { toast } from "react-toastify";
 
 dayjs.extend(customParseFormat);
 
@@ -47,7 +56,10 @@ export default function Home() {
   };
 
   const calculateTotal = () => {
-    const productTotal = data.products.reduce((sum, p) => sum + p.price * p.qty, 0);
+    const productTotal = data.products.reduce(
+      (sum, p) => sum + p.price * p.qty,
+      0
+    );
     const gstAmount = (productTotal * data.gst) / 100;
     return productTotal + gstAmount + Number(data.shipping);
   };
@@ -58,14 +70,22 @@ export default function Home() {
       label: "Details",
       children: (
         <Form
-          layout="vertical"
+          layout="veritcal"
           initialValues={data}
           onValuesChange={(_, allValues) => handleFieldChange(allValues)}
         >
-          <Form.Item name="to" label="To Name"><Input /></Form.Item>
-          <Form.Item name="toLocation" label="To Location"><Input /></Form.Item>
-          <Form.Item name="toAddress" label="To Address"><Input /></Form.Item>
-          <Form.Item name="reference" label="Reference"><Input /></Form.Item>
+          <Form.Item name="to" label="To Name">
+            <Input />
+          </Form.Item>
+          <Form.Item name="toLocation" label="To Location">
+            <Input />
+          </Form.Item>
+          <Form.Item name="toAddress" label="To Address">
+            <Input />
+          </Form.Item>
+          <Form.Item name="reference" label="Reference">
+            <Input />
+          </Form.Item>
           <Form.Item label="Date">
             <DatePicker
               value={dayjs(data.date, dateFormat)}
@@ -73,7 +93,9 @@ export default function Home() {
               onChange={handleDateChange}
             />
           </Form.Item>
-          <Form.Item name="branch" label="Branch"><Input /></Form.Item>
+          <Form.Item name="branch" label="Branch">
+            <Input />
+          </Form.Item>
         </Form>
       ),
     },
@@ -85,16 +107,24 @@ export default function Home() {
           <Form layout="vertical">
             <Form.Item label="Select Products">
               <Select
-                mode="tags"
+                mode="multiple"
                 placeholder="Search or type to add products"
                 onChange={(values) => {
                   const newProducts = values.map((val) => {
                     const selected = productList.find((p) => p.id === val);
-                    return selected
-                      ? { ...selected, qty: 1 }
-                      : { name: val, model: "-", price: 0, qty: 1, image: "" };
+                    return { ...selected, qty: 1 };
                   });
+                  //   return selected
+                  //     ? { ...selected, qty: 1 }
+                  //     : { name: val, model: "-", price: 0, qty: 1, image: "" };
+                  // });
                   setData({ ...data, products: newProducts });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !data.products.length) {
+                    e.preventDefault(); // Prevent form submission or dropdown closing
+                    toast.error("Please select a product from the list");
+                  }
                 }}
                 value={data.products.map((p) => p.id || p.name)}
                 tokenSeparators={[","]}
@@ -107,23 +137,40 @@ export default function Home() {
           </Form>
 
           {data.products.map((product, index) => (
-            <div key={index} className="border p-4 mb-4 rounded-md bg-white shadow-sm">
+            <div
+              key={index}
+              className="border p-4 mb-4 rounded-md bg-white shadow-sm"
+            >
               <Form layout="vertical">
                 <Form.Item label="Price">
-                  <InputNumber min={0} className="w-full" value={product.price} readOnly />
+                  <InputNumber
+                    min={0}
+                    className="w-full"
+                    value={product.price}
+                    readOnly
+                  />
                 </Form.Item>
                 <Form.Item label="Quantity">
                   <InputNumber
                     min={1}
                     className="w-full"
                     value={product.qty}
-                    onChange={(value) => handleProductChange(index, "qty", value)}
+                    onChange={(value) =>
+                      handleProductChange(index, "qty", value)
+                    }
                   />
                 </Form.Item>
-                {product.image && (
-                  <img src={product.image} alt={product.name} className="h-20 mt-2" />
+                {/* {console.log(product.id)} */}
+                {product.id && (
+                  <img
+                    src={`/products/${product.id}.png`}
+                    alt={product.name}
+                    className="h-40 mt-2"
+                  />
                 )}
-                <Button danger onClick={() => removeProduct(index)}>Remove Product</Button>
+                <Button danger onClick={() => removeProduct(index)}>
+                  Remove Product
+                </Button>
               </Form>
             </div>
           ))}
@@ -136,9 +183,17 @@ export default function Home() {
       children: (
         <div>
           <h2 className="text-xl font-bold mb-4">Quote Summary</h2>
-          <p className="text-lg font-semibold">Total Cost: ₹{calculateTotal()}</p>
-          <PDFDownloadLink document={<QuotePDF data={data} />} fileName="quote.pdf">
-            <Button type="primary" className="mt-4">Download PDF</Button>
+          <p className="text-lg font-semibold">
+            Total Cost: ₹{calculateTotal()}
+          </p>
+
+          <PDFDownloadLink
+            document={<QuotePDF data={data} />}
+            fileName="quote.pdf"
+          >
+            <Button type="primary" className="mt-4">
+              Download PDF
+            </Button>
           </PDFDownloadLink>
         </div>
       ),
@@ -146,7 +201,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <div className="w-1/3 p-6">
         <Tabs defaultActiveKey="1" items={items} />
       </div>

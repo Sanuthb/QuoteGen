@@ -28,7 +28,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   headerRow: { backgroundColor: "#f4b084", fontWeight: "bold" },
-  col: { flex: 1, textAlign: "center", fontSize: 10, borderRight: "1px solid black" },
+  col: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 10,
+    borderRight: "1px solid black",
+  },
   productImage: { width: 50, height: 50, margin: "auto" },
   warrantyBox: {
     marginTop: 3,
@@ -45,7 +50,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4b084",
     fontWeight: "bold",
   },
-  warrantyHeading: { fontSize: 9, fontWeight: "bold", backgroundColor: "#ffff00", padding: 2 },
+  warrantyHeading: {
+    fontSize: 9,
+    fontWeight: "bold",
+    backgroundColor: "#ffff00",
+    padding: 2,
+  },
 });
 
 export default function QuotePDF({ data }) {
@@ -73,7 +83,13 @@ export default function QuotePDF({ data }) {
           </View>
 
           {/* Middle: Logos */}
-          <View style={[styles.flexRow, styles.border, { flex: 1, justifyContent: "center" }]}>
+          <View
+            style={[
+              styles.flexRow,
+              styles.border,
+              { flex: 1, justifyContent: "center" },
+            ]}
+          >
             <Image src={logo1} style={{ width: 30, height: 30, margin: 5 }} />
             <Image src={logo2} style={{ width: 30, height: 30, margin: 5 }} />
             <Image src={logo3} style={{ width: 30, height: 30, margin: 5 }} />
@@ -100,6 +116,7 @@ export default function QuotePDF({ data }) {
             <Text style={styles.col}>Total Price</Text>
           </View>
         </View>
+        {console.log("p.id")}
 
         {/* Product Rows */}
         {data.products.map((p, index) => (
@@ -108,8 +125,12 @@ export default function QuotePDF({ data }) {
               <Text style={styles.col}>{index + 1}</Text>
               <Text style={styles.col}>{p.model || "N/A"}</Text>
               <View style={styles.col}>
-                {p.image ? (
-                  <Image src={p.image} style={styles.productImage} />
+               
+                {p.id ? (
+                  <Image
+                    src={`/products/${p.id}.png`}
+                    style={styles.productImage}
+                  />
                 ) : (
                   <Text>No Image</Text>
                 )}
@@ -124,7 +145,9 @@ export default function QuotePDF({ data }) {
             {/* Warranty Box under Product Description */}
             {p.warranty && (
               <View style={[styles.row, styles.warrantyBox]}>
-                <Text style={styles.warrantyHeading}>WARRANTY INFORMATION:</Text>
+                <Text style={styles.warrantyHeading}>
+                  WARRANTY INFORMATION:
+                </Text>
                 <Text>{p.warranty}</Text>
               </View>
             )}
@@ -134,7 +157,9 @@ export default function QuotePDF({ data }) {
         {/* Total Calculation */}
         <View style={styles.totalSection}>
           <Text>Total: ₹{total.toFixed(2)}</Text>
-          <Text>GST ({data.gst}%): ₹{gstAmount.toFixed(2)}</Text>
+          <Text>
+            GST ({data.gst}%): ₹{gstAmount.toFixed(2)}
+          </Text>
           <Text>Shipping: ₹{data.shipping}</Text>
           <Text style={{ fontSize: 14 }}>
             Grand Total: ₹{grandTotal.toFixed(2)}

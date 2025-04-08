@@ -1,4 +1,6 @@
+import { PDFViewer } from "@react-pdf/renderer";
 import React from "react";
+import QuotePDF from "../QuotePDF";
 
 const Livepreview = ({ data }) => {
   return (
@@ -7,7 +9,11 @@ const Livepreview = ({ data }) => {
 
       <div className="bg-gray-200 p-4 text-center">
         <h2 className="text-2xl font-bold">Quotation</h2>
-        <img src="/quoteheader.jpg" alt="Header" className="w-full h-full object-cover" />
+        <img
+          src="/quoteheader.jpg"
+          alt="Header"
+          className="w-full h-full object-cover"
+        />
 
         <div className="flex text-sm mt-2 w-full">
           {/* Left Section */}
@@ -38,21 +44,33 @@ const Livepreview = ({ data }) => {
           {/* Right Section */}
           <div className="flex flex-1">
             <div>
-              <div className="px-1 border-[.1rem] border-b-0 border-black">Ref</div>
-              <div className="px-1 border-[.1rem] border-b-0 border-black">Date</div>
+              <div className="px-1 border-[.1rem] border-b-0 border-black">
+                Ref
+              </div>
+              <div className="px-1 border-[.1rem] border-b-0 border-black">
+                Date
+              </div>
               <div className="px-1 border-[.1rem] border-black">Branch</div>
             </div>
             <div className="w-full">
-              <div className="px-1 border-[.1rem] border-l-0 border-b-0 border-black">{data.reference}</div>
-              <div className="px-1 border-[.1rem] border-l-0 border-b-0 border-black">{data.date}</div>
-              <div className="px-1 border-[.1rem] border-l-0 border-black">{data.branch}</div>
+              <div className="px-1 border-[.1rem] border-l-0 border-b-0 border-black">
+                {data.reference}
+              </div>
+              <div className="px-1 border-[.1rem] border-l-0 border-b-0 border-black">
+                {data.date}
+              </div>
+              <div className="px-1 border-[.1rem] border-l-0 border-black">
+                {data.branch}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-center bg-[#f8cbad] border-[.1rem] border-black mt-4 p-2">
-        <span className="text-xs font-bold">Proposed Equipments & Specification</span>
+        <span className="text-xs font-bold">
+          Proposed Equipments & Specification
+        </span>
       </div>
 
       <table className="w-full border-collapse border border-gray-400 mt-2">
@@ -61,7 +79,9 @@ const Livepreview = ({ data }) => {
             <th className="border text-xs p-1">Sl no.</th>
             <th className="border text-xs p-1">Model Number</th>
             <th className="border text-xs p-1">Visual Image</th>
-            <th className="border text-xs p-1">Equipment Specification Description</th>
+            <th className="border text-xs p-1">
+              Equipment Specification Description
+            </th>
             <th className="border text-xs p-1">MRP Per Unit</th>
             <th className="border text-xs p-1">Spl Price Per Unit</th>
             <th className="border text-xs p-1">Qty No</th>
@@ -75,8 +95,12 @@ const Livepreview = ({ data }) => {
                 <td className="border p-2">{index + 1}</td>
                 <td className="border p-2">{p.model || "N/A"}</td>
                 <td className="border p-2">
-                  {p.image ? (
-                    <img src={p.image} alt={p.name} className="h-10 w-auto" />
+                  {p.id ? (
+                    <img
+                      src={`/products/${p.id}.png`}
+                      alt={p.name}
+                      className="h-40 w-auto"
+                    />
                   ) : (
                     "No Image"
                   )}
@@ -90,23 +114,39 @@ const Livepreview = ({ data }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="8" className="text-center p-2">No products available</td>
+              <td colSpan="8" className="text-center p-2">
+                No products available
+              </td>
             </tr>
           )}
         </tbody>
       </table>
 
       <div className="mt-4 border-t border-gray-400 pt-2">
-        <p><strong>Total:</strong> ₹{data.products.reduce((sum, p) => sum + p.price * p.qty, 0)}</p>
-        <p><strong>GST ({data.gst}%):</strong> ₹{(data.products.reduce((sum, p) => sum + p.price * p.qty, 0) * data.gst) / 100}</p>
-        <p><strong>Shipping:</strong> ₹{data.shipping}</p>
+        <p>
+          <strong>Total:</strong> ₹
+          {data.products.reduce((sum, p) => sum + p.price * p.qty, 0)}
+        </p>
+        <p>
+          <strong>GST ({data.gst}%):</strong> ₹
+          {(data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
+            data.gst) /
+            100}
+        </p>
+        <p>
+          <strong>Shipping:</strong> ₹{data.shipping}
+        </p>
         <p className="font-bold text-lg">
           Grand Total: ₹
-          {data.products.reduce((sum, p) => sum + p.price * p.qty, 0) * (1 + data.gst / 100) + Number(data.shipping)}
+          {data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
+            (1 + data.gst / 100) +
+            Number(data.shipping)}
         </p>
+       
       </div>
     </div>
   );
 };
 
 export default Livepreview;
+
