@@ -6,126 +6,325 @@ import {
   Image,
   StyleSheet,
 } from "@react-pdf/renderer";
+import React from "react";
 
-const headerImage = "/quoteheader.jpg";
-const logo1 = "/logo1.png";
-const logo2 = "/logo2.png";
-const logo3 = "/logo3.png";
-
+// Create styles
 const styles = StyleSheet.create({
-  page: { padding: 20, fontSize: 10 },
-  section: { marginBottom: 10 },
-  image: { width: "100%", height: 80, marginBottom: 10 },
-  textCenter: { textAlign: "center" },
-  flexRow: { flexDirection: "row", width: "100%" },
-  border: { border: "1px solid black", padding: 5 },
-  bold: { fontWeight: "bold" },
-  table: { width: "100%", marginTop: 10, border: "1px solid black" },
-  row: {
-    flexDirection: "row",
-    borderBottom: "1px solid black",
-    padding: 5,
-    backgroundColor: "#fff",
+  page: {
+    padding: 30,
+    fontFamily: "Helvetica",
   },
-  headerRow: { backgroundColor: "#f4b084", fontWeight: "bold" },
-  col: {
-    flex: 1,
+  header: {
     textAlign: "center",
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  headerImage: {
+    width: "100%",
+    marginBottom: 10,
+  },
+  flex: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  flexItem: {
+    flex: 1,
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  borderLeft0: {
+    borderLeftWidth: 0,
+  },
+  borderBottom0: {
+    borderBottomWidth: 0,
+  },
+  cell: {
+    padding: 3,
     fontSize: 10,
-    borderRight: "1px solid black",
   },
-  productImage: { width: 50, height: 50, margin: "auto" },
-  warrantyBox: {
-    marginTop: 3,
+  logosContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "black",
     padding: 5,
-    border: "1px solid #000",
-    fontSize: 8,
-    backgroundColor: "#fce4d6",
+    backgroundColor: "white",
   },
-  totalSection: {
-    marginTop: 15,
-    padding: 10,
-    border: "1px solid black",
-    textAlign: "right",
+  logo: {
+    width: 40,
+    height: 40,
+    margin: "0 5px",
+  },
+  sectionTitle: {
+    backgroundColor: "#f8cbad",
+    padding: 8,
+    textAlign: "center",
+    fontSize: 12,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  table: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#888",
+    marginBottom: 10,
+  },
+  tableHead: {
     backgroundColor: "#f4b084",
+    flexDirection: "row",
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#888",
+  },
+  tableHeaderCell: {
+    padding: 5,
+    fontSize: 8,
+    fontWeight: "bold",
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "#888",
+  },
+  tableCell: {
+    padding: 5,
+    fontSize: 9,
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "#888",
+  },
+  productName: {
+    fontWeight: "bold",
+    borderBottomWidth: 1,
+    borderBottomColor: "#888",
+    paddingBottom: 3,
+    textAlign: "center",
+  },
+  productFeature: {
+    fontSize: 8,
+    marginBottom: 2,
+    color: "#db691d",
+  },
+  featureItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 3,
+  },
+  featureIcon: {
+    width: 8,
+    marginRight: 3,
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    objectFit: "contain",
+    marginHorizontal: "auto",
+  },
+  totals: {
+    marginTop: 10,
+    alignItems: "flex-end",
+  },
+  totalRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 3,
+  },
+  totalLabel: {
+    fontSize: 10,
+    fontWeight: "bold",
+    marginRight: 5,
+  },
+  totalValue: {
+    fontSize: 10,
+  },
+  grandTotal: {
+    fontSize: 12,
     fontWeight: "bold",
   },
-  warrantyHeading: {
+  footer: {
+    marginTop: 15,
+    fontSize: 8,
+    color: "#444",
+  },
+  footerSection: {
+    marginBottom: 8,
+  },
+  footerHeading: {
     fontSize: 9,
     fontWeight: "bold",
-    backgroundColor: "#ffff00",
-    padding: 2,
+    color: "black",
+    marginBottom: 3,
+  },
+  footerList: {
+    marginLeft: 10,
+  },
+  footerListItem: {
+    flexDirection: "row",
+    marginBottom: 2,
+  },
+  footerListBullet: {
+    marginRight: 5,
+  },
+  footerCompany: {
+    marginTop: 10,
   },
 });
 
-export default function QuotePDF({ data }) {
-  const total = data.products.reduce((sum, p) => sum + p.price * p.qty, 0);
-  const gstAmount = (total * data.gst) / 100;
-  const grandTotal = total + gstAmount + Number(data.shipping);
+// checkmark symbol for features
+const CHECKMARK = "✓";
 
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <Text style={[styles.textCenter, { fontSize: 18, marginBottom: 10 }]}>
-          Quotation
-        </Text>
-        <Image src={headerImage} style={styles.image} />
+const QuotePDF = ({ data }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      {/* Header Section */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Quotation</Text>
+        {/* Note: In PDF we need to use imported images, can't use web URL paths */}
+        <Image style={styles.headerImage} src="/quoteheader.jpg" />
+      </View>
 
-        {/* Address & Reference Section */}
-        <View style={styles.flexRow}>
-          {/* Left: To Details */}
-          <View style={[styles.border, { flex: 1 }]}>
-            <Text style={styles.bold}>To:</Text>
-            <Text>{data.to}</Text>
-            <Text>{data.toLocation}</Text>
-            <Text>{data.toAddress}</Text>
+      {/* To and Reference Section */}
+      <View style={styles.flex}>
+        {/* Left Section - To */}
+        <View style={[styles.flex, styles.flexItem]}>
+          <View style={[styles.border, styles.cell]}>
+            <Text>To.</Text>
           </View>
+          <View style={styles.flexItem}>
+            <View
+              style={[
+                styles.border,
+                styles.borderLeft0,
+                styles.borderBottom0,
+                styles.cell,
+              ]}
+            >
+              <Text>{data.to}</Text>
+            </View>
+            <View
+              style={[
+                styles.border,
+                styles.borderLeft0,
+                styles.borderBottom0,
+                styles.cell,
+              ]}
+            >
+              <Text>{data.toLocation}</Text>
+            </View>
+            <View style={[styles.border, styles.borderLeft0, styles.cell]}>
+              <Text>{data.toAddress}</Text>
+            </View>
+          </View>
+        </View>
 
-          {/* Middle: Logos */}
-          <View
+        {/* Middle Section - Logos */}
+        <View style={[styles.logosContainer, styles.flexItem]}>
+          <Image src="/logo1.png" style={styles.logo} />
+          <Image src="/logo3.png" style={styles.logo} />
+          <Image src="/logo2.png" style={styles.logo} />
+        </View>
+
+        {/* Right Section - Reference */}
+        <View style={[styles.flex, styles.flexItem]}>
+          <View>
+            <View style={[styles.border, styles.borderBottom0, styles.cell]}>
+              <Text>Ref</Text>
+            </View>
+            <View style={[styles.border, styles.borderBottom0, styles.cell]}>
+              <Text>Date</Text>
+            </View>
+            <View style={[styles.border, styles.cell]}>
+              <Text>Branch</Text>
+            </View>
+          </View>
+          <View style={styles.flexItem}>
+            <View
+              style={[
+                styles.border,
+                styles.borderLeft0,
+                styles.borderBottom0,
+                styles.cell,
+              ]}
+            >
+              <Text>{data.reference}</Text>
+            </View>
+            <View
+              style={[
+                styles.border,
+                styles.borderLeft0,
+                styles.borderBottom0,
+                styles.cell,
+              ]}
+            >
+              <Text>{data.date}</Text>
+            </View>
+            <View style={[styles.border, styles.borderLeft0, styles.cell]}>
+              <Text>{data.branch}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Section Title */}
+      <View style={styles.sectionTitle}>
+        <Text>Proposed Equipments & Specification</Text>
+      </View>
+
+      {/* Products Table */}
+      <View style={styles.table}>
+        {/* Table Header */}
+        <View style={styles.tableHead}>
+          <Text style={[styles.tableHeaderCell, { width: "5%" }]}>Sl no.</Text>
+          <Text style={[styles.tableHeaderCell, { width: "10%" }]}>
+            Model Number
+          </Text>
+          <Text style={[styles.tableHeaderCell, { width: "15%" }]}>
+            Visual Image
+          </Text>
+          <Text style={[styles.tableHeaderCell, { width: "40%" }]}>
+            Equipment Specification Description
+          </Text>
+          <Text style={[styles.tableHeaderCell, { width: "8%" }]}>
+            MRP Per Unit
+          </Text>
+          <Text style={[styles.tableHeaderCell, { width: "8%" }]}>
+            Spl Price Per Unit
+          </Text>
+          <Text style={[styles.tableHeaderCell, { width: "5%" }]}>Qty No</Text>
+          <Text
             style={[
-              styles.flexRow,
-              styles.border,
-              { flex: 1, justifyContent: "center" },
+              styles.tableHeaderCell,
+              { width: "9%", borderRightWidth: 0 },
             ]}
           >
-            <Image src={logo1} style={{ width: 30, height: 30, margin: 5 }} />
-            <Image src={logo2} style={{ width: 30, height: 30, margin: 5 }} />
-            <Image src={logo3} style={{ width: 30, height: 30, margin: 5 }} />
-          </View>
-
-          {/* Right: Reference, Date, Branch */}
-          <View style={[styles.border, { flex: 1 }]}>
-            <Text>Ref: {data.reference}</Text>
-            <Text>Date: {data.date}</Text>
-            <Text>Branch: {data.branch}</Text>
-          </View>
+            Total Unit Price
+          </Text>
         </View>
 
-        {/* Product Table Header */}
-        <View style={[styles.table, styles.headerRow]}>
-          <View style={styles.row}>
-            <Text style={styles.col}>Sl No.</Text>
-            <Text style={styles.col}>Model Number</Text>
-            <Text style={styles.col}>Visual Image</Text>
-            <Text style={styles.col}>Equipment Description</Text>
-            <Text style={styles.col}>MRP Per Unit</Text>
-            <Text style={styles.col}>Special Price</Text>
-            <Text style={styles.col}>Qty</Text>
-            <Text style={styles.col}>Total Price</Text>
-          </View>
-        </View>
-        {console.log("p.id")}
-
-        {/* Product Rows */}
-        {data.products.map((p, index) => (
-          <View key={index} style={[styles.table, { backgroundColor: "#fff" }]}>
-            <View style={styles.row}>
-              <Text style={styles.col}>{index + 1}</Text>
-              <Text style={styles.col}>{p.model || "N/A"}</Text>
-              <View style={styles.col}>
-               
+        {/* Table Body */}
+        {data.products.length > 0 ? (
+          data.products.map((p, index) => (
+            <View key={index} style={styles.tableRow}>
+              <View style={[styles.tableCell, { width: "5%" }]}>
+                <Text>{index + 1}</Text>
+              </View>
+              <View style={[styles.tableCell, { width: "10%" }]}>
+                <Text>{p.model || "N/A"}</Text>
+              </View>
+              <View style={[styles.tableCell, { width: "15%" }]}>
                 {p.id ? (
                   <Image
                     src={`/products/${p.id}.png`}
@@ -135,37 +334,159 @@ export default function QuotePDF({ data }) {
                   <Text>No Image</Text>
                 )}
               </View>
-              <Text style={styles.col}>{p.name}</Text>
-              <Text style={styles.col}>₹{p.price}</Text>
-              <Text style={styles.col}>₹{(p.price * 0.9).toFixed(2)}</Text>
-              <Text style={styles.col}>{p.qty}</Text>
-              <Text style={styles.col}>₹{(p.price * p.qty).toFixed(2)}</Text>
-            </View>
-
-            {/* Warranty Box under Product Description */}
-            {p.warranty && (
-              <View style={[styles.row, styles.warrantyBox]}>
-                <Text style={styles.warrantyHeading}>
-                  WARRANTY INFORMATION:
-                </Text>
-                <Text>{p.warranty}</Text>
+              <View style={[styles.tableCell, { width: "40%" }]}>
+                <Text style={styles.productName}>{p.name}</Text>
+                <View style={{ marginTop: 5 }}>
+                  {p.feature?.map((f, i) => (
+                    <View key={i} style={styles.featureItem}>
+                      <Text style={styles.featureIcon}>{CHECKMARK}</Text>
+                      <Text style={styles.productFeature}>{f}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
-            )}
+              <View style={[styles.tableCell, { width: "8%" }]}>
+                <Text>₹{p.price}</Text>
+              </View>
+              <View style={[styles.tableCell, { width: "8%" }]}>
+                <Text>₹{p.price * 0.9}</Text>
+              </View>
+              <View style={[styles.tableCell, { width: "5%" }]}>
+                <Text>{p.qty}</Text>
+              </View>
+              <View
+                style={[styles.tableCell, { width: "9%", borderRightWidth: 0 }]}
+              >
+                <Text>₹{p.price * p.qty}</Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <View style={styles.tableRow}>
+            <View
+              style={[styles.tableCell, { width: "100%", borderRightWidth: 0 }]}
+            >
+              <Text>No products available</Text>
+            </View>
           </View>
-        ))}
+        )}
+      </View>
 
-        {/* Total Calculation */}
-        <View style={styles.totalSection}>
-          <Text>Total: ₹{total.toFixed(2)}</Text>
-          <Text>
-            GST ({data.gst}%): ₹{gstAmount.toFixed(2)}
-          </Text>
-          <Text>Shipping: ₹{data.shipping}</Text>
-          <Text style={{ fontSize: 14 }}>
-            Grand Total: ₹{grandTotal.toFixed(2)}
+      {/* Totals Section */}
+      <View style={styles.totals}>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Total:</Text>
+          <Text style={styles.totalValue}>
+            ₹{data.products.reduce((sum, p) => sum + p.price * p.qty, 0)}
           </Text>
         </View>
-      </Page>
-    </Document>
-  );
-}
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>GST ({data.gst}%):</Text>
+          <Text style={styles.totalValue}>
+            ₹
+            {(data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
+              data.gst) /
+              100}
+          </Text>
+        </View>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Shipping:</Text>
+          <Text style={styles.totalValue}>₹{data.shipping}</Text>
+        </View>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Grand Total:</Text>
+          <Text style={styles.grandTotal}>
+            ₹
+            {data.products.reduce((sum, p) => sum + p.price * p.qty, 0) *
+              (1 + data.gst / 100) +
+              Number(data.shipping)}
+          </Text>
+        </View>
+      </View>
+
+      {/* Footer Information */}
+      <View style={styles.footer}>
+        <View style={styles.footerSection}>
+          <Text style={styles.footerHeading}>ELGIS FITNESS</Text>
+          <Text>
+            #44, CMR Road, Near Axis Bank, H.R.B.R. 2nd Block, Kalyan Nagar,
+            Bangalore – 560043
+          </Text>
+          <Text>Phone: 89700 70089 / 95907 89333</Text>
+          <Text>GSTIN/UIN: 29AJOPN1843M1ZJ</Text>
+          <Text>PAN: AJOPN1843M</Text>
+        </View>
+
+        <View style={styles.footerSection}>
+          <Text style={styles.footerHeading}>Payment & Delivery Terms:</Text>
+          <View style={styles.footerList}>
+            <View style={styles.footerListItem}>
+              <Text style={styles.footerListBullet}>•</Text>
+              <Text>
+                Please issue Crossed Cheque / Demand Draft / Pay Order in favor
+                of ELGIS FITNESS.
+              </Text>
+            </View>
+            <View style={styles.footerListItem}>
+              <Text style={styles.footerListBullet}>•</Text>
+              <Text>
+                Delivery within 45 days upon receipt of Purchase Order and 80%
+                advance payment.
+              </Text>
+            </View>
+            <View style={styles.footerListItem}>
+              <Text style={styles.footerListBullet}>•</Text>
+              <Text>Subject to stock availability.</Text>
+            </View>
+            <View style={styles.footerListItem}>
+              <Text style={styles.footerListBullet}>•</Text>
+              <Text>
+                Transportation Charges: Free within city limits. Unloading at
+                actuals.
+              </Text>
+            </View>
+            <View style={styles.footerListItem}>
+              <Text style={styles.footerListBullet}>•</Text>
+              <Text>Balance Payment: Due upon delivery and installation.</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.footerSection}>
+          <Text style={styles.footerHeading}>Warranty & Support:</Text>
+          <Text>
+            We assure that our equipment is built for long-term performance. Our
+            team is committed to providing excellent after-sales support to
+            maintain your organization's reputation.
+          </Text>
+        </View>
+
+        <View style={styles.footerSection}>
+          <Text style={styles.footerHeading}>Bank Details:</Text>
+          <Text>Account Name: ELGIS FITNESS</Text>
+          <Text>Bank Name: HDFC Bank</Text>
+          <Text>Account Number: 03532000010202</Text>
+          <Text>Branch: Kalyan Nagar</Text>
+          <Text>IFSC Code: HDFC0000353</Text>
+        </View>
+
+        <View style={styles.footerSection}>
+          <Text>
+            We look forward to building a long-term, mutually beneficial
+            relationship with your esteemed organization. You can always count
+            on our prompt attention and services.
+          </Text>
+        </View>
+
+        <View style={styles.footerCompany}>
+          <Text style={styles.footerHeading}>For ELGIS FITNESS</Text>
+          <Text>Nagaraj A</Text>
+          <Text>Regional Sales Manager</Text>
+          <Text>📞 89700 70089 / 95907 89333</Text>
+        </View>
+      </View>
+    </Page>
+  </Document>
+);
+
+export default QuotePDF;

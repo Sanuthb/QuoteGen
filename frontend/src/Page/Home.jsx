@@ -11,6 +11,7 @@ import {
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import QuotePDF from "../QuotePDF";
 import Livepreview from "../Components/Livepreview";
+import MergedPDFDownload from "../Components/MergedPDFDownload";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { productList } from "../data";
@@ -187,14 +188,7 @@ export default function Home() {
             Total Cost: ₹{calculateTotal()}
           </p>
 
-          <PDFDownloadLink
-            document={<QuotePDF data={data} />}
-            fileName="quote.pdf"
-          >
-            <Button type="primary" className="mt-4">
-              Download PDF
-            </Button>
-          </PDFDownloadLink>
+          <MergedPDFDownload data={data} />
         </div>
       ),
     },
