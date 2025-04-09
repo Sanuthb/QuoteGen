@@ -9,8 +9,8 @@ const App = () => {
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<Home />} />
           </Routes>
         </main>
       </div>

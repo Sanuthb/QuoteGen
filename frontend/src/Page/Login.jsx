@@ -17,7 +17,7 @@ const Login = () => {
         content: "Login successful!",
       });
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 1500);
     } else {
       messageApi.open({
