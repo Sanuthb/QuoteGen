@@ -1,0 +1,14 @@
+diff --git a/node_modules/fontkit/dist/browser-module.mjs b/node_modules/fontkit/dist/browser-module.mjs
+index 4d0a389..e5c64ef 100644
+--- a/node_modules/fontkit/dist/browser-module.mjs
++++ b/node_modules/fontkit/dist/browser-module.mjs
+@@ -5,7 +5,8 @@ import $6uUbQ$fastdeepequal from "fast-deep-equal";
+ import {getCombiningClass as $6uUbQ$getCombiningClass, getScript as $6uUbQ$getScript, isDigit as $6uUbQ$isDigit, getCategory as $6uUbQ$getCategory, isMark as $6uUbQ$isMark} from "unicode-properties";
+ import $6uUbQ$unicodetrie from "unicode-trie";
+ import $6uUbQ$dfa from "dfa";
+-import $6uUbQ$clone from "clone";
++// import $6uUbQ$clone from "clone";
++import * as $6uUbQ$clone from "clone";
+ import $6uUbQ$tinyinflate from "tiny-inflate";
+ import $6uUbQ$brotlidecompressjs from "brotli/decompress.js";
+ 
