@@ -142,33 +142,34 @@ export default function Home() {
               key={index}
               className="border p-4 mb-4 rounded-md bg-white shadow-sm"
             >
-              <Form layout="vertical">
-                <Form.Item label="Price">
-                  <InputNumber
-                    min={0}
-                    className="w-full"
-                    value={product.price}
-                    readOnly
-                  />
-                </Form.Item>
-                <Form.Item label="Quantity">
-                  <InputNumber
-                    min={1}
-                    className="w-full"
-                    value={product.qty}
-                    onChange={(value) =>
-                      handleProductChange(index, "qty", value)
-                    }
-                  />
-                </Form.Item>
-                {/* {console.log(product.id)} */}
-                {product.id && (
-                  <img
-                    src={`/products/${product.id}.png`}
-                    alt={product.name}
-                    className="h-40 mt-2"
-                  />
-                )}
+              <Form style={{ }}>
+                <div className="flex items-center justify-between">
+                  <Form.Item label="Price">
+                    <InputNumber
+                      min={0}
+                      className="w-full"
+                      value={product.price}
+                      readOnly
+                    />
+                  </Form.Item>
+                  <Form.Item label="Quantity">
+                    <InputNumber
+                      min={1}
+                      className="w-full"
+                      value={product.qty}
+                      onChange={(value) =>
+                        handleProductChange(index, "qty", value)
+                      }
+                    />
+                  </Form.Item>
+                  {product.id && (
+                    <img
+                      src={`/products/${product.id}.png`}
+                      alt={product.name}
+                      className="h-20"
+                    />
+                  )}
+                </div>
                 <Button danger onClick={() => removeProduct(index)}>
                   Remove Product
                 </Button>
@@ -196,7 +197,7 @@ export default function Home() {
 
   return (
     <div className="flex ">
-      <div className="w-1/3 p-6">
+      <div className="w-[40%] p-6">
         <Tabs defaultActiveKey="1" items={items} />
       </div>
       <div className="w-2/3 p-6 border-l">
